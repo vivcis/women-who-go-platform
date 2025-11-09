@@ -1,14 +1,15 @@
 [phases.setup]
 cmds = [
     "cd frontend && curl -fsSL https://deb.nodesource.com/setup_18.x | bash -",
-    "apt-get update && apt-get install -y nodejs",
-    "cd backend && go mod download"
+    "apt-get update && apt-get install -y nodejs curl",
+    "curl -L https://golang.org/dl/go1.21.0.linux-amd64.tar.gz | tar -xz -C /usr/local",
+    "cd backend && /usr/local/go/bin/go mod download"
 ]
 
 [phases.build]
 cmds = [
     "cd frontend && npm install && npm run build",
-    "cd backend && go build -o women-who-go-backend"
+    "cd backend && /usr/local/go/bin/go build -o women-who-go-backend"
 ]
 
 [phases.start]
@@ -16,3 +17,5 @@ cmd = "cd backend && ./women-who-go-backend"
 
 [env]
 PORT = "8080"
+PATH = "/usr/local/go/bin:/app/node_modules/.bin:$PATH"
+GOPATH = "/app/backend"
