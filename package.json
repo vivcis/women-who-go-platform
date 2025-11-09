@@ -1,0 +1,10 @@
+{
+  "name": "women-who-go-platform",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build && cd ../backend && go build -o women-who-go-backend",
+    "start": "cd backend && ./women-who-go-backend"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
