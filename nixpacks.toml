@@ -9,11 +9,11 @@ cmds = [
 [phases.build]
 cmds = [
     "cd frontend && npm install && npm run build",
-    "cd backend && /usr/local/go/bin/go build -o women-who-go-backend"
+    "cd backend && /usr/local/go/bin/go build -v -o women-who-go-backend ."  
 ]
 
 [phases.start]
-cmd = "cd backend && ./women-who-go-backend"
+cmd = "./backend/women-who-go-backend" 
 
 [env]
 PORT = "8080"

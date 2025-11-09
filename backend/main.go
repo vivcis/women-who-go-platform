@@ -27,8 +27,9 @@ func main() {
 	// CORS configuration - allow frontend development server
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{
-		"http://localhost:3000", 
-		"http://localhost:8080", 
+		"http://localhost:3000",
+		"https://*.railway.app",  // Allow all Railway subdomains
+		"https://*.up.railway.app", // Railway's domain
 		os.Getenv("FRONTEND_URL"),
 	}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
