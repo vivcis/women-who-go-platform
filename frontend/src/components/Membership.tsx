@@ -265,8 +265,8 @@ export default function Membership() {
               💰 Money-Back Guarantee
             </h4>
             <p className="text-gray-600">
-              Try any paid plan risk-free. If you're not satisfied within 30 days, 
-              we'll give you a full refund. No questions asked.
+              Try any paid plan risk-free. If you&apos;re not satisfied within 30 days, 
+              we&apos;ll give you a full refund. No questions asked.
             </p>
           </div>
         </div>

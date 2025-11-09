@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 export default function Hero() {
   const handleJoinCommunity = () => {
@@ -46,17 +47,21 @@ export default function Hero() {
           {/* Right Content - Mascot Image */}
           <div className="relative">
             <div className="aspect-square rounded-3xl bg-gradient-to-br from-secondary via-primary to-purple-900 p-8 flex items-center justify-center shadow-2xl relative overflow-hidden float">
-              {/* Mascot Image */}
-              <img 
-                src="/images/mascot.png" 
-                alt="Women Who Go Mascot"
-                className="w-full h-full object-contain transform hover:scale-105 transition-transform duration-300 bounce"
-              />
+              {/* Mascot Image - Using Next.js Image component */}
+              <div className="w-full h-full relative">
+                <Image 
+                  src="/images/mascot.png" 
+                  alt="Women Who Go Mascot"
+                  fill
+                  className="object-contain transform hover:scale-105 transition-transform duration-300 bounce"
+                  priority
+                />
+              </div>
               
               {/* Text overlay on hover */}
               <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-8">
                 <p className="text-white text-center text-sm leading-relaxed italic">
-                  "Join our growing community of women Gophers"
+                  &ldquo;Join our growing community of women Gophers&rdquo;
                 </p>
               </div>
             </div>
