@@ -25,36 +25,20 @@ A full-stack platform connecting women in tech to learn and master Go programmin
 
 ## 🏗️ Project Structure
 women-who-go-platform/
-├── backend/ # Go backend API
-│ ├── main.go # Application entry point
-│ ├── go.mod # Go dependencies
-│ ├── handlers/ # HTTP request handlers
-│ │ ├── users.go
-│ │ ├── membership.go
-│ │ ├── payment.go
-│ │ ├── resources.go
-│ │ └── stats.go
-│ ├── database/ # Database configuration
-│ │ └── db.go
-│ └── models/ # Data models
-│ └── models.go
-├── frontend/ # Next.js frontend
-│ ├── app/ # App router pages
-│ │ └── page.tsx
-│ ├── components/ # React components
-│ │ ├── Header.tsx
-│ │ ├── Hero.tsx
-│ │ ├── Membership.tsx
-│ │ ├── CorePillars.tsx
-│ │ ├── Offerings.tsx
-│ │ ├── CTA.tsx
-│ │ └── Footer.tsx
-│ ├── types/ # TypeScript definitions
-│ │ └── index.ts
-│ └── public/
-│ └── images/
-│ └── mascot.png
-└── README.md
+├── backend/                # Go backend API
+│   ├── handlers/           # HTTP request handlers
+│   ├── database/           # Database configuration
+│   ├── models/             # Data models
+│   ├── main.go             # Application entry point
+│   └── go.mod              # Go dependencies
+├── frontend/               # Next.js frontend
+│   ├── app/                # App router pages
+│   ├── components/         # React components
+│   ├── types/              # TypeScript definitions
+│   └── public/             # Static assets
+├── nixpacks.toml           # Deployment configuration
+├── railway.json            # Railway deployment config
+└── package.json            # Root package configuration
 
 
 ## 🚀 Quick Start
@@ -85,7 +69,7 @@ cp .env.example .env
 # Run the server
 go run main.go
 
-# Backend will run on http://localhost:8080
+### Backend will run on http://localhost:8080
 
 ### Frontend Setup
 
@@ -97,7 +81,7 @@ npm install
 # Run development server
 npm run dev
 
-# Frontend will run on http://localhost:3000
+### Frontend will run on http://localhost:3000
 
 ## Backend (.env)
 DATABASE_URL=postgresql://username:password@localhost:5432/women_who_go
@@ -105,7 +89,7 @@ PORT=8080
 FRONTEND_URL=http://localhost:3000
 GIN_MODE=debug
 
-# Frontend (.env.local)
+### Frontend (.env.local)
 NEXT_PUBLIC_API_URL=http://localhost:8080
 
 ### 📊 API Endpoints
@@ -145,3 +129,5 @@ Transactions
 
 Resources
 - id, title, description, url, category, difficulty, created_at, updated_at
+
+Built with ❤️ for women in tech learning Go
