@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { createUser, type User } from "../actions/user";
 
 const navItems = [
   { label: "Home", href: "#home", section: "home" },
@@ -62,42 +63,29 @@ export default function Header() {
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      console.log('Submitting directly to backend:', formData);
-      
-      // DIRECT connection to backend
-      const response = await fetch('http://localhost:8080/api/users', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
 
-      console.log('Response status:', response.status);
-      
-      const result = await response.json();
-      console.log('Response data:', result);
+      const result = await createUser(formData);
 
-      if (response.ok) {
+      if (result.success) {
         alert('🎉 Welcome to GoWomen! Please proceed to select a membership plan.');
         setShowAuthModal(false);
         clearForm(); // Clear form after successful submission
         scrollToSection('membership');
-      } else if (response.status === 409) {
+      } else if (result.status === 409) {
         // Email already exists - this is actually good! User can proceed
         alert('✅ Welcome back! You already have an account. Please proceed to select a membership plan.');
         setShowAuthModal(false);
         clearForm(); // Clear form for returning users too
         scrollToSection('membership');
       } else {
-        alert('❌ Registration failed: ' + (result.error || `Status: ${response.status}`));
+        alert('❌ Registration failed: ' + (result.error || 'Unknown error'));
         // Don't clear form on error so user can fix and resubmit
       }
     } catch (error) {
       console.error('Registration error:', error);
-      alert('🔴 Cannot connect to backend. Please ensure it\'s running on localhost:8080');
+      alert('🔴 Registration failed. Please try again.');
       // Don't clear form on connection error
     } finally {
       setIsLoading(false);
@@ -139,8 +127,7 @@ export default function Header() {
                 <Image
                   src="/images/mascot.png"
                   alt="GoWomen Mascot"
-                  width={32}
-                  height={32}
+                  fill
                   className="object-contain bounce"
                 />
               </div>
