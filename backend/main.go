@@ -28,7 +28,7 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{
 		"http://localhost:3000",
-		"https://*.railway.app",  // Allow all Railway subdomains
+		"https://*.railway.app",    // Allow all Railway subdomains
 		"https://*.up.railway.app", // Railway's domain
 		os.Getenv("FRONTEND_URL"),
 	}
@@ -91,6 +91,5 @@ func main() {
 	}
 
 	log.Printf("Server running on port %s", port)
-	log.Printf("Frontend can connect from: http://localhost:3000")
 	router.Run(":" + port)
 }
