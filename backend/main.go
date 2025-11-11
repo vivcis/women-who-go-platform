@@ -38,9 +38,10 @@ func main() {
 	router.Use(cors.New(config))
 
 	// Serve static files (frontend)
-	router.Static("/static", "./static")
+	router.Static("/_next", "./static/_next")
+	router.Static("/images", "./static/images")
 	router.StaticFile("/", "./static/index.html")
-	router.StaticFile("/index.html", "./static/index.html")
+	router.StaticFile("/favicon.ico", "./static/favicon.ico")
 
 	// Health check
 	router.GET("/health", func(c *gin.Context) {
