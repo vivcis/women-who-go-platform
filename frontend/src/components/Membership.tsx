@@ -2,13 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Check, Star } from "lucide-react";
-
-interface MembershipPlan {
-  name: string;
-  price: number;
-  description: string;
-  features: string[];
-}
+import { getMembershipPlans, type MembershipPlan } from "../actions/membership";
+import { initiatePayment, type PaymentRequest } from "../actions/payment";
 
 export default function Membership() {
   const [plans, setPlans] = useState<MembershipPlan[]>([]);
@@ -21,62 +16,16 @@ export default function Membership() {
 
   const fetchMembershipPlans = async () => {
     try {
-      // Try direct backend connection first
-      const response = await fetch('http://localhost:8080/api/membership-plans');
-      
-      if (!response.ok) {
-        throw new Error(`Backend returned ${response.status}`);
+      const result = await getMembershipPlans();
+      if (result.success) {
+        setPlans(result.data);
+      } else {
+        console.error('Error fetching membership plans:', result.error);
+        setPlans([]);
       }
-      
-      const data = await response.json();
-      setPlans(data);
     } catch (error) {
-      console.error('Error fetching membership plans from backend:', error);
-      
-      // Fallback to Next.js API route
-      try {
-        const fallbackResponse = await fetch('/api/membership-plans');
-        const fallbackData = await fallbackResponse.json();
-        setPlans(fallbackData);
-      } catch (fallbackError) {
-        console.error('Error fetching from API route:', fallbackError);
-        // Final fallback data
-        setPlans([
-          {
-            name: "Free",
-            price: 0,
-            description: "Access to community resources and monthly meetups",
-            features: [
-              "Community forum access",
-              "Monthly virtual meetups",
-              "Resource library",
-            ],
-          },
-          {
-            name: "Supporter",
-            price: 10,
-            description: "Support the community and get exclusive content",
-            features: [
-              "Everything in Free",
-              "Exclusive workshops",
-              "1-on-1 mentorship (1 session/month)",
-              "Early access to events",
-            ],
-          },
-          {
-            name: "Patron",
-            price: 25,
-            description: "Maximum support with premium benefits",
-            features: [
-              "Everything in Supporter",
-              "Unlimited mentorship sessions",
-              "Job board access",
-              "Conference ticket discounts",
-              "Priority support",
-            ],
-          },
-        ]);
-      }
+      console.error('Error fetching membership plans:', error);
+      setPlans([]);
     } finally {
       setLoading(false);
     }
@@ -93,8 +42,8 @@ export default function Membership() {
       return;
     }
 
-    // For paid plans, try direct backend connection first
-    const paymentData = {
+    // For paid plans, initiate payment
+    const paymentData: PaymentRequest = {
       user_id: 1, // Demo user ID - in real app, use actual user ID from auth
       amount: price,
       payment_method: "card", // or "mpesa", "paypal"
@@ -102,53 +51,18 @@ export default function Membership() {
     };
 
     try {
-      console.log('Initiating payment for plan:', planName, 'Data:', paymentData);
-      
-      // Try direct backend connection first
-      const response = await fetch('http://localhost:8080/api/payments/initiate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(paymentData),
-      });
 
-      console.log('Payment response status:', response.status);
-      
-      const result = await response.json();
-      console.log('Payment response data:', result);
-      
-      if (response.ok) {
-        alert(`💰 Payment initiated for ${planName} plan!\nReference: ${result.reference}\nAmount: $${price}`);
+      const result = await initiatePayment(paymentData);
+
+      if (result.success) {
+        alert(`💰 Payment initiated for ${planName} plan!\nReference: ${result.data.reference}\nAmount: $${price}`);
         // In real app, redirect to payment page or show payment modal
       } else {
         alert(`❌ Failed to initiate payment: ${result.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Direct payment error:', error);
-      
-      // Fallback to Next.js API route
-      try {
-        console.log('Trying fallback API route...');
-        const fallbackResponse = await fetch('/api/payments/initiate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(paymentData),
-        });
-
-        const fallbackResult = await fallbackResponse.json();
-        
-        if (fallbackResponse.ok) {
-          alert(`💰 Payment initiated for ${planName} plan!\nReference: ${fallbackResult.reference}`);
-        } else {
-          alert(`❌ Payment failed: ${fallbackResult.error || 'Service unavailable'}`);
-        }
-      } catch (fallbackError) {
-        console.error('Fallback payment error:', fallbackError);
-        alert(`🔴 Payment service temporarily unavailable.\n\nPlease ensure:\n• Backend is running on localhost:8080\n• CORS is properly configured\n• Try the free plan for now`);
-      }
+      console.error('Payment error:', error);
+      alert(`🔴 Payment service temporarily unavailable.\n\nPlease ensure backend is running and properly configured.`);
     } finally {
       setSelectedPlan(null);
     }

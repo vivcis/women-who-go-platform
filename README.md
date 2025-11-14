@@ -57,19 +57,17 @@ women-who-go-platform/
 
 ### Backend Setup
 
-   cd backend
+cd backend
 
 # Install dependencies
 go mod tidy
 
 # Set up environment variables
-cp .env.example .env
+cp example.env .env
 # Edit .env with your database credentials
 
 # Run the server
 go run main.go
-
-### Backend will run on http://localhost:8080
 
 ### Frontend Setup
 
@@ -78,19 +76,12 @@ cd frontend
 # Install dependencies
 npm install
 
+# Set up environment variables
+cp example.env .env
+
 # Run development server
 npm run dev
 
-### Frontend will run on http://localhost:3000
-
-## Backend (.env)
-DATABASE_URL=postgresql://username:password@localhost:5432/women_who_go
-PORT=8080
-FRONTEND_URL=http://localhost:3000
-GIN_MODE=debug
-
-### Frontend (.env.local)
-NEXT_PUBLIC_API_URL=http://localhost:8080
 
 ### 📊 API Endpoints
 
@@ -121,7 +112,7 @@ GET /api/stats - Get platform statistics
 Users
 - id, email, name, location, skill_level, bio, github_url, created_at, updated_at
 
-Memberships  
+Memberships
 - id, user_id, plan_type, amount, status, start_date, end_date, created_at, updated_at
 
 Transactions

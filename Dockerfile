@@ -32,6 +32,9 @@ COPY --from=backend-builder /app/backend/women-who-go-backend ./
 # Copy frontend build - FIXED: Use correct path
 COPY --from=frontend-builder /app/frontend/out ./static
 
+# Set environment variables
+ENV GIN_MODE=release
+
 # Expose port
 EXPOSE 8080
 

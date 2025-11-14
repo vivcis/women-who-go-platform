@@ -18,9 +18,15 @@ func Connect() {
 		log.Fatal("DATABASE_URL environment variable not set")
 	}
 
+	// Set log level based on environment
+	logLevel := logger.Silent
+	if os.Getenv("GIN_MODE") == "debug" {
+		logLevel = logger.Info
+	}
+
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logLevel),
 	})
 
 	if err != nil {

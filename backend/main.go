@@ -28,7 +28,7 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{
 		"http://localhost:3000",
-		"https://*.railway.app",  // Allow all Railway subdomains
+		"https://*.railway.app",    // Allow all Railway subdomains
 		"https://*.up.railway.app", // Railway's domain
 		os.Getenv("FRONTEND_URL"),
 	}
@@ -38,9 +38,10 @@ func main() {
 	router.Use(cors.New(config))
 
 	// Serve static files (frontend)
-	router.Static("/static", "./static")
+	router.Static("/_next", "./static/_next")
+	router.Static("/images", "./static/images")
 	router.StaticFile("/", "./static/index.html")
-	router.StaticFile("/index.html", "./static/index.html")
+	router.StaticFile("/favicon.ico", "./static/favicon.ico")
 
 	// Health check
 	router.GET("/health", func(c *gin.Context) {
@@ -91,6 +92,5 @@ func main() {
 	}
 
 	log.Printf("Server running on port %s", port)
-	log.Printf("Frontend can connect from: http://localhost:3000")
 	router.Run(":" + port)
 }
