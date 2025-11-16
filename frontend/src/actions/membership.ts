@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 export interface MembershipPlan {
@@ -7,17 +8,17 @@ export interface MembershipPlan {
   features: string[];
 }
 
-// Membership plans action
-export async function getMembershipPlans(): Promise<{ success: boolean; data: MembershipPlan[]; error?: string }> {
-  try {
-    const data = await api.get('/api/membership-plans');
-    return { success: true, data };
-  } catch (error) {
-    console.error('Membership plans fetch error:', error);
-    return {
-      success: false,
-      data: [],
-      error: error instanceof Error ? error.message : 'Failed to fetch membership plans'
-    };
-  }
-}
+// Membership plans fetch function for TanStack Query
+export const fetchMembershipPlans = async (): Promise<MembershipPlan[]> => {
+  return api.get('/api/membership-plans');
+};
+
+// Custom hook for membership plans
+export const useMembershipPlans = () => {
+  return useQuery({
+    queryKey: ['membership-plans'],
+    queryFn: fetchMembershipPlans,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
+};
+

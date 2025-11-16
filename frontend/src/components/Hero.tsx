@@ -2,20 +2,13 @@
 
 import React from "react";
 import Image from "next/image";
+import { useModal } from "@/contexts/ModalContext";
 
 export default function Hero() {
+  const { openAuthModal } = useModal();
+
   const handleJoinCommunity = () => {
-    // Trigger the Join Now button click in header
-    const joinButton = document.querySelector('header button[onclick]') as HTMLButtonElement;
-    if (joinButton) {
-      joinButton.click();
-    } else {
-      // Fallback: scroll to membership section
-      const membershipSection = document.getElementById('membership');
-      if (membershipSection) {
-        membershipSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+    openAuthModal();
   };
 
   return (

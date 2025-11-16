@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { useModal } from "@/contexts/ModalContext";
 import { createUser, type User } from "../actions/user";
 
 const navItems = [
@@ -21,7 +22,7 @@ const defaultFormData = {
 };
 
 export default function Header() {
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { showAuthModal, openAuthModal, closeAuthModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({ ...defaultFormData });
 
@@ -35,7 +36,7 @@ export default function Header() {
   const handleJoinNow = () => {
     // Reset form to default values when opening modal
     setFormData({ ...defaultFormData });
-    setShowAuthModal(true);
+    openAuthModal();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -71,13 +72,13 @@ export default function Header() {
 
       if (result.success) {
         toast.success('🎉 Welcome to GoWomen! Please proceed to select a membership plan.');
-        setShowAuthModal(false);
+        closeAuthModal();
         clearForm(); // Clear form after successful submission
         scrollToSection('membership');
       } else if (result.status === 409) {
         // Email already exists - this is actually good! User can proceed
         toast.success('✅ Welcome back! You already have an account. Please proceed to select a membership plan.');
-        setShowAuthModal(false);
+        closeAuthModal();
         clearForm(); // Clear form for returning users too
         scrollToSection('membership');
       } else {
@@ -94,13 +95,13 @@ export default function Header() {
   };
 
   const handleCloseModal = () => {
-    setShowAuthModal(false);
+    closeAuthModal();
     // Clear form when closing modal
     clearForm();
   };
 
   const handleCancel = () => {
-    setShowAuthModal(false);
+    closeAuthModal();
     clearForm();
   };
 

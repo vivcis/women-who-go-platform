@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Calendar, Code2, MessageSquare, Ticket } from "lucide-react";
+import { IconRenderer } from "./shared/IconRenderer";
 import type { Offering } from "@/types";
 
 const offerings: Offering[] = [
@@ -31,22 +31,6 @@ const offerings: Offering[] = [
   },
 ];
 
-const IconComponent = ({ icon }: { icon: string }) => {
-  const iconProps = { className: "w-6 h-6", strokeWidth: 2 };
-  
-  switch (icon) {
-    case "calendar":
-      return <Calendar {...iconProps} />;
-    case "code":
-      return <Code2 {...iconProps} />;
-    case "message":
-      return <MessageSquare {...iconProps} />;
-    case "ticket":
-      return <Ticket {...iconProps} />;
-    default:
-      return null;
-  }
-};
 
 export default function Offerings() {
   return (
@@ -71,7 +55,7 @@ export default function Offerings() {
             >
               <div className="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
                 <div className="text-primary group-hover:text-white transition-colors duration-300">
-                  <IconComponent icon={offering.icon} />
+                  <IconRenderer icon={offering.icon} />
                 </div>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-3 group-hover:text-primary transition-colors duration-300">

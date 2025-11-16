@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
+import { useModal } from "@/contexts/ModalContext";
 
 export default function CTA() {
+  const { openAuthModal } = useModal();
+
   const handleJoinToday = () => {
-    const joinButton = document.querySelector('header button') as HTMLButtonElement;
-    if (joinButton) {
-      joinButton.click();
-    }
+    openAuthModal();
   };
 
   return (

@@ -1,10 +1,17 @@
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || '';
 
+class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 export const api = {
   async get(endpoint: string) {
     const response = await fetch(`${BASE_URL}${endpoint}`);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new ApiError(response.status, `HTTP error! status: ${response.status}`);
     }
     return response.json();
   },
@@ -18,7 +25,7 @@ export const api = {
       body: data ? JSON.stringify(data) : undefined,
     });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new ApiError(response.status, `HTTP error! status: ${response.status}`);
     }
     return response.json();
   },
@@ -32,7 +39,7 @@ export const api = {
       body: data ? JSON.stringify(data) : undefined,
     });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new ApiError(response.status, `HTTP error! status: ${response.status}`);
     }
     return response.json();
   },
@@ -42,8 +49,10 @@ export const api = {
       method: 'DELETE',
     });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new ApiError(response.status, `HTTP error! status: ${response.status}`);
     }
     return response.json();
   },
 };
+
+export { ApiError };

@@ -1,36 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Check, Star } from "lucide-react";
 import toast from "react-hot-toast";
-import { getMembershipPlans, type MembershipPlan } from "../actions/membership";
+import { useMembershipPlans, type MembershipPlan } from "../actions/membership";
 import { initiatePayment, type PaymentRequest } from "../actions/payment";
 
 export default function Membership() {
-  const [plans, setPlans] = useState<MembershipPlan[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: plans = [], isLoading: loading, error } = useMembershipPlans();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchMembershipPlans();
-  }, []);
+  if (error) {
+    console.error('Error fetching membership plans:', error);
+  }
 
-  const fetchMembershipPlans = async () => {
-    try {
-      const result = await getMembershipPlans();
-      if (result.success) {
-        setPlans(result.data);
-      } else {
-        console.error('Error fetching membership plans:', result.error);
-        setPlans([]);
-      }
-    } catch (error) {
-      console.error('Error fetching membership plans:', error);
-      setPlans([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleJoinPlan = async (planName: string, price: number) => {
     setSelectedPlan(planName);
