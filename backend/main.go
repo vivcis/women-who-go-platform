@@ -26,12 +26,18 @@ func main() {
 
 	// CORS configuration - allow frontend development server
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{
+	allowedOrigins := []string{
 		"http://localhost:3000",
 		"https://*.railway.app",    // Allow all Railway subdomains
 		"https://*.up.railway.app", // Railway's domain
-		os.Getenv("FRONTEND_URL"),
 	}
+
+	// Add FRONTEND_URL if it's set and not empty
+	if frontendURL := os.Getenv("FRONTEND_URL"); frontendURL != "" {
+		allowedOrigins = append(allowedOrigins, frontendURL)
+	}
+
+	config.AllowOrigins = allowedOrigins
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept"}
 	config.AllowCredentials = true
