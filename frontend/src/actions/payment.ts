@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+import { api } from '@/lib/api';
 
 export interface PaymentRequest {
   user_id: number;
@@ -10,21 +10,8 @@ export interface PaymentRequest {
 // Payment initiation action
 export async function initiatePayment(paymentData: PaymentRequest) {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/payments/initiate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(paymentData),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Payment initiation failed');
-    }
-
-    return { success: true, data, status: response.status };
+    const data = await api.post('/api/payments/initiate', paymentData);
+    return { success: true, data, status: 200 };
   } catch (error) {
     console.error('Payment initiation error:', error);
     return {

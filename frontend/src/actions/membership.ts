@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+import { api } from '@/lib/api';
 
 export interface MembershipPlan {
   name: string;
@@ -10,13 +10,7 @@ export interface MembershipPlan {
 // Membership plans action
 export async function getMembershipPlans(): Promise<{ success: boolean; data: MembershipPlan[]; error?: string }> {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/membership-plans`);
-
-    if (!response.ok) {
-      throw new Error('Backend service unavailable');
-    }
-
-    const data = await response.json();
+    const data = await api.get('/api/membership-plans');
     return { success: true, data };
   } catch (error) {
     console.error('Membership plans fetch error:', error);

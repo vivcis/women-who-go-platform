@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+import { api } from '@/lib/api';
 
 export interface User {
   id: number;
@@ -13,21 +13,8 @@ export interface User {
 // User registration action
 export async function createUser(userData: Omit<User, 'id'>) {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || `Status: ${response.status}`);
-    }
-
-    return { success: true, data, status: response.status };
+    const data = await api.post('/api/users', userData);
+    return { success: true, data, status: 200 };
   } catch (error) {
     console.error('User creation error:', error);
     return {

@@ -34,6 +34,7 @@ COPY --from=frontend-builder /app/frontend/out ./static
 
 # Set environment variables
 ENV GIN_MODE=release
+ENV DATABASE_URL=${DATABASE_URL}
 
 # Expose port
 EXPOSE 8080
