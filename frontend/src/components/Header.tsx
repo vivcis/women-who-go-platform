@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import toast from "react-hot-toast";
 import { createUser, type User } from "../actions/user";
 
 const navItems = [
@@ -69,23 +70,23 @@ export default function Header() {
       const result = await createUser(formData);
 
       if (result.success) {
-        alert('🎉 Welcome to GoWomen! Please proceed to select a membership plan.');
+        toast.success('🎉 Welcome to GoWomen! Please proceed to select a membership plan.');
         setShowAuthModal(false);
         clearForm(); // Clear form after successful submission
         scrollToSection('membership');
       } else if (result.status === 409) {
         // Email already exists - this is actually good! User can proceed
-        alert('✅ Welcome back! You already have an account. Please proceed to select a membership plan.');
+        toast.success('✅ Welcome back! You already have an account. Please proceed to select a membership plan.');
         setShowAuthModal(false);
         clearForm(); // Clear form for returning users too
         scrollToSection('membership');
       } else {
-        alert('❌ Registration failed: ' + (result.error || 'Unknown error'));
+        toast.error('❌ Registration failed: ' + (result.error || 'Unknown error'));
         // Don't clear form on error so user can fix and resubmit
       }
     } catch (error) {
       console.error('Registration error:', error);
-      alert('🔴 Registration failed. Please try again.');
+      toast.error('🔴 Registration failed. Please try again.');
       // Don't clear form on connection error
     } finally {
       setIsLoading(false);
@@ -103,18 +104,6 @@ export default function Header() {
     clearForm();
   };
 
-  // Test backend connection
-  const testBackendConnection = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/health');
-      const data = await response.json();
-      console.log('Backend health:', data);
-      alert(`✅ Backend is running: ${data.message}`);
-    } catch (error) {
-      console.error('Backend health check failed:', error);
-      alert('❌ Backend is not accessible. Please start your Go backend server.');
-    }
-  };
 
   return (
     <>
@@ -152,13 +141,6 @@ export default function Header() {
 
             {/* CTA Button */}
             <div className="flex items-center gap-4">
-              {/* <button 
-                onClick={testBackendConnection}
-                className="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full transition-colors"
-                title="Test backend connection"
-              >
-                ✅ Backend OK
-              </button> */}
               <button 
                 onClick={handleJoinNow}
                 className="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:shadow-lg hover:shadow-primary/30 hover-bounce"

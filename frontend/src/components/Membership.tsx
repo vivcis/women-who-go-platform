@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Check, Star } from "lucide-react";
+import toast from "react-hot-toast";
 import { getMembershipPlans, type MembershipPlan } from "../actions/membership";
 import { initiatePayment, type PaymentRequest } from "../actions/payment";
 
@@ -37,7 +38,7 @@ export default function Membership() {
     if (price === 0) {
       // Free plan - immediate access
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate processing
-      alert(`🎉 Welcome to GoWomen! Your ${planName} membership has been activated.`);
+      toast.success(`🎉 Welcome to GoWomen! Your ${planName} membership has been activated.`);
       setSelectedPlan(null);
       return;
     }
@@ -55,14 +56,14 @@ export default function Membership() {
       const result = await initiatePayment(paymentData);
 
       if (result.success) {
-        alert(`💰 Payment initiated for ${planName} plan!\nReference: ${result.data.reference}\nAmount: $${price}`);
+        toast.success(`💰 Payment initiated for ${planName} plan! Reference: ${result.data.reference} Amount: $${price}`);
         // In real app, redirect to payment page or show payment modal
       } else {
-        alert(`❌ Failed to initiate payment: ${result.error || 'Unknown error'}`);
+        toast.error(`❌ Failed to initiate payment: ${result.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Payment error:', error);
-      alert(`🔴 Payment service temporarily unavailable.\n\nPlease ensure backend is running and properly configured.`);
+      toast.error(`🔴 Payment service temporarily unavailable. Please ensure backend is running and properly configured.`);
     } finally {
       setSelectedPlan(null);
     }
