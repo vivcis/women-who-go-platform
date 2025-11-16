@@ -7,11 +7,24 @@ class ApiError extends Error {
   }
 }
 
+const handleApiError = async (response: Response): Promise<never> => {
+  let errorMessage = `HTTP error! status: ${response.status}`;
+  try {
+    const errorBody = await response.json();
+    if (errorBody.error) {
+      errorMessage = errorBody.error;
+    }
+  } catch {
+    // If parsing fails, keep the default message
+  }
+  throw new ApiError(response.status, errorMessage);
+};
+
 export const api = {
   async get(endpoint: string) {
     const response = await fetch(`${BASE_URL}${endpoint}`);
     if (!response.ok) {
-      throw new ApiError(response.status, `HTTP error! status: ${response.status}`);
+      return handleApiError(response);
     }
     return response.json();
   },
@@ -25,7 +38,7 @@ export const api = {
       body: data ? JSON.stringify(data) : undefined,
     });
     if (!response.ok) {
-      throw new ApiError(response.status, `HTTP error! status: ${response.status}`);
+      return handleApiError(response);
     }
     return response.json();
   },
@@ -39,7 +52,7 @@ export const api = {
       body: data ? JSON.stringify(data) : undefined,
     });
     if (!response.ok) {
-      throw new ApiError(response.status, `HTTP error! status: ${response.status}`);
+      return handleApiError(response);
     }
     return response.json();
   },
@@ -49,7 +62,7 @@ export const api = {
       method: 'DELETE',
     });
     if (!response.ok) {
-      throw new ApiError(response.status, `HTTP error! status: ${response.status}`);
+      return handleApiError(response);
     }
     return response.json();
   },

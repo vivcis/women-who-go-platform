@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -24,6 +25,9 @@ func main() {
 	// Initialize Gin
 	router := gin.Default()
 
+	// Set trusted proxies to nil
+	router.SetTrustedProxies(nil)
+
 	// CORS configuration - allow frontend development server
 	config := cors.DefaultConfig()
 	allowedOrigins := []string{
@@ -42,6 +46,21 @@ func main() {
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept"}
 	config.AllowCredentials = true
 	router.Use(cors.New(config))
+
+	// Static asset caching middleware
+	router.Use(func(c *gin.Context) {
+		path := c.Request.URL.Path
+
+		// Cache Next.js build files and images for 1 year (they have hashed names)
+		if strings.HasPrefix(path, "/_next/") || strings.HasPrefix(path, "/images/") {
+			c.Header("Cache-Control", "public, max-age=31536000, immutable")
+		} else if strings.HasSuffix(path, ".ico") {
+			// Cache favicon for 1 week
+			c.Header("Cache-Control", "public, max-age=604800")
+		}
+
+		c.Next()
+	})
 
 	// Serve static files (frontend)
 	router.Static("/_next", "./static/_next")

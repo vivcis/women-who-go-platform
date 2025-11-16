@@ -22,7 +22,7 @@ services:
     container_name: gowomen-app
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/gowomen?sslmode=disable
-      GIN_MODE: debug
+      GIN_MODE: release
     ports:
       - "8080:8080"
     depends_on:
