@@ -67,7 +67,17 @@ export default function RootLayout({
         <QueryProvider>
           <ModalProvider>
             {children}
-            <Toaster />
+            <Toaster
+              toastOptions={{
+                duration: 5000,
+                success: {
+                  duration: 4000,
+                },
+                error: {
+                  duration: 6000,
+                },
+              }}
+            />
           </ModalProvider>
         </QueryProvider>
       </body>
