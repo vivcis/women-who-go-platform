@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { BookOpen, Users, TrendingUp } from "lucide-react";
+import { IconRenderer } from "./shared/IconRenderer";
 import type { CorePillar } from "@/types";
 
 const pillars: CorePillar[] = [
@@ -25,20 +25,6 @@ const pillars: CorePillar[] = [
   },
 ];
 
-const IconComponent = ({ icon }: { icon: string }) => {
-  const iconProps = { className: "w-6 h-6", strokeWidth: 2 };
-  
-  switch (icon) {
-    case "book":
-      return <BookOpen {...iconProps} />;
-    case "users":
-      return <Users {...iconProps} />;
-    case "chart":
-      return <TrendingUp {...iconProps} />;
-    default:
-      return null;
-  }
-};
 
 export default function CorePillars() {
   return (
@@ -56,7 +42,7 @@ export default function CorePillars() {
             >
               <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
                 <div className="text-primary group-hover:scale-110 transition-transform duration-300">
-                  <IconComponent icon={pillar.icon} />
+                  <IconRenderer icon={pillar.icon} />
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center group-hover:text-primary transition-colors duration-300">

@@ -2,6 +2,9 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import toast from "react-hot-toast";
+import { useModal } from "@/contexts/ModalContext";
+import { createUser, type User } from "../actions/user";
 
 const navItems = [
   { label: "Home", href: "#home", section: "home" },
@@ -19,7 +22,7 @@ const defaultFormData = {
 };
 
 export default function Header() {
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { showAuthModal, openAuthModal, closeAuthModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({ ...defaultFormData });
 
@@ -33,7 +36,7 @@ export default function Header() {
   const handleJoinNow = () => {
     // Reset form to default values when opening modal
     setFormData({ ...defaultFormData });
-    setShowAuthModal(true);
+    openAuthModal();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -62,42 +65,29 @@ export default function Header() {
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      console.log('Submitting directly to backend:', formData);
-      
-      // DIRECT connection to backend
-      const response = await fetch('http://localhost:8080/api/users', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
 
-      console.log('Response status:', response.status);
-      
-      const result = await response.json();
-      console.log('Response data:', result);
+      const result = await createUser(formData);
 
-      if (response.ok) {
-        alert('🎉 Welcome to GoWomen! Please proceed to select a membership plan.');
-        setShowAuthModal(false);
+      if (result.success) {
+        toast.success('🎉 Welcome to GoWomen! Please proceed to select a membership plan.');
+        closeAuthModal();
         clearForm(); // Clear form after successful submission
         scrollToSection('membership');
-      } else if (response.status === 409) {
+      } else if (result.status === 409) {
         // Email already exists - this is actually good! User can proceed
-        alert('✅ Welcome back! You already have an account. Please proceed to select a membership plan.');
-        setShowAuthModal(false);
+        toast.success('✅ Welcome back! You already have an account. Please proceed to select a membership plan.');
+        closeAuthModal();
         clearForm(); // Clear form for returning users too
         scrollToSection('membership');
       } else {
-        alert('❌ Registration failed: ' + (result.error || `Status: ${response.status}`));
+        toast.error('❌ Registration failed: ' + (result.error || 'Unknown error'));
         // Don't clear form on error so user can fix and resubmit
       }
     } catch (error) {
       console.error('Registration error:', error);
-      alert('🔴 Cannot connect to backend. Please ensure it\'s running on localhost:8080');
+      toast.error('🔴 Registration failed. Please try again.');
       // Don't clear form on connection error
     } finally {
       setIsLoading(false);
@@ -105,28 +95,16 @@ export default function Header() {
   };
 
   const handleCloseModal = () => {
-    setShowAuthModal(false);
+    closeAuthModal();
     // Clear form when closing modal
     clearForm();
   };
 
   const handleCancel = () => {
-    setShowAuthModal(false);
+    closeAuthModal();
     clearForm();
   };
 
-  // Test backend connection
-  const testBackendConnection = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/health');
-      const data = await response.json();
-      console.log('Backend health:', data);
-      alert(`✅ Backend is running: ${data.message}`);
-    } catch (error) {
-      console.error('Backend health check failed:', error);
-      alert('❌ Backend is not accessible. Please start your Go backend server.');
-    }
-  };
 
   return (
     <>
@@ -139,8 +117,7 @@ export default function Header() {
                 <Image
                   src="/images/mascot.png"
                   alt="GoWomen Mascot"
-                  width={32}
-                  height={32}
+                  fill
                   className="object-contain bounce"
                 />
               </div>
@@ -165,13 +142,6 @@ export default function Header() {
 
             {/* CTA Button */}
             <div className="flex items-center gap-4">
-              {/* <button 
-                onClick={testBackendConnection}
-                className="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full transition-colors"
-                title="Test backend connection"
-              >
-                ✅ Backend OK
-              </button> */}
               <button 
                 onClick={handleJoinNow}
                 className="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 hover:shadow-lg hover:shadow-primary/30 hover-bounce"

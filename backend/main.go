@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -24,23 +25,48 @@ func main() {
 	// Initialize Gin
 	router := gin.Default()
 
+	// Set trusted proxies to nil
+	router.SetTrustedProxies(nil)
+
 	// CORS configuration - allow frontend development server
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{
+	allowedOrigins := []string{
 		"http://localhost:3000",
-		"https://*.railway.app",  // Allow all Railway subdomains
+		"https://*.railway.app",    // Allow all Railway subdomains
 		"https://*.up.railway.app", // Railway's domain
-		os.Getenv("FRONTEND_URL"),
 	}
+
+	// Add FRONTEND_URL if it's set and not empty
+	if frontendURL := os.Getenv("FRONTEND_URL"); frontendURL != "" {
+		allowedOrigins = append(allowedOrigins, frontendURL)
+	}
+
+	config.AllowOrigins = allowedOrigins
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept"}
 	config.AllowCredentials = true
 	router.Use(cors.New(config))
 
+	// Static asset caching middleware
+	router.Use(func(c *gin.Context) {
+		path := c.Request.URL.Path
+
+		// Cache Next.js build files and images for 1 year (they have hashed names)
+		if strings.HasPrefix(path, "/_next/") || strings.HasPrefix(path, "/images/") {
+			c.Header("Cache-Control", "public, max-age=31536000, immutable")
+		} else if strings.HasSuffix(path, ".ico") {
+			// Cache favicon for 1 week
+			c.Header("Cache-Control", "public, max-age=604800")
+		}
+
+		c.Next()
+	})
+
 	// Serve static files (frontend)
-	router.Static("/static", "./static")
+	router.Static("/_next", "./static/_next")
+	router.Static("/images", "./static/images")
 	router.StaticFile("/", "./static/index.html")
-	router.StaticFile("/index.html", "./static/index.html")
+	router.StaticFile("/favicon.ico", "./static/favicon.ico")
 
 	// Health check
 	router.GET("/health", func(c *gin.Context) {
@@ -91,6 +117,5 @@ func main() {
 	}
 
 	log.Printf("Server running on port %s", port)
-	log.Printf("Frontend can connect from: http://localhost:3000")
 	router.Run(":" + port)
 }
